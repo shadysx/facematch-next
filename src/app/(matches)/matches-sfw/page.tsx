@@ -32,9 +32,6 @@ export default function MatchesSFW() {
     fetchMatchesWithImages();
   }, [matches]);
 
-
-  console.log("MATCHES", matchesWithImages);
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl text-center font-bold mb-4">Face Matches</h1>
