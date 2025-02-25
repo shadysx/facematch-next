@@ -1,13 +1,9 @@
 "use client";
 
 import ImageUploadButton from "@/components/common/UploadImageButton";
-import { ToggleThemeButton } from "@/components/shadcn/ToggleThemeButton";
-import {
-  useSearchMatches,
-  useSearchMatchesWithImages,
-} from "@/hooks/queries/useMatches";
+import { useSearchMatchesWithImages } from "@/hooks/queries/useMatches";
 
-export default function Home() {
+export default function MatchesNSFW() {
   const {
     data: matchesNames,
     mutate: getMatchesNames,

@@ -1,20 +1,16 @@
 "use client";
 
 import ImageUploadButton from "@/components/common/UploadImageButton";
-import { ToggleThemeButton } from "@/components/shadcn/ToggleThemeButton";
-import {
-  useSearchMatches,
-  useSearchMatchesWithImages,
-} from "@/hooks/queries/useMatches";
+import { useSearchMatches } from "@/hooks/queries/useMatches";
 
-export default function Home() {
+export default function MatchesSFW() {
   const {
     data: matchesNames,
     mutate: getMatchesNames,
     isPending,
     isError,
     error,
-  } = useSearchMatchesWithImages();
+  } = useSearchMatches();
 
   const handleImageSelected = (file: File) => {
     getMatchesNames(file);
@@ -34,16 +30,7 @@ export default function Home() {
 
       <ImageUploadButton onImageSelected={handleImageSelected} />
       {matchesNames?.map((match) => (
-        <div key={match.name}>
-          <h2>{match.name}</h2>
-          {match.images && match.images[0] && (
-            <img
-              src={`data:image/jpeg;base64,${match.images[0]}`}
-              alt={match.name}
-              className="w-[30px] h-[30px] object-cover rounded-sm"
-            />
-          )}
-        </div>
+        <h2 key={match}>{match}</h2>
       ))}
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { Button } from "../ui/button";
 
 interface ImageUploadButtonProps {
   onImageSelected: (file: File) => void;
@@ -26,14 +27,9 @@ export default function ImageUploadButton({
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <button
-        onClick={handleButtonClick}
-        disabled={isLoading}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded disabled:opacity-50"
-        type="button"
-      >
+      <Button onClick={handleButtonClick} disabled={isLoading} type="button">
         {isLoading ? "Loading..." : "Select an image"}
-      </button>
+      </Button>
 
       {/* Hidden file input */}
       <input
