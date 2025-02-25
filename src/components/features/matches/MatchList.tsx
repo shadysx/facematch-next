@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { MatchWithImages } from "@/types/match";
+import { MatchWithImages } from "@/types/matchWithImages";
 import { snakeCaseToTitleCase } from "../../../../utils/snakeCaseToTitleCase";
+import { getImageSrc } from "../../../../utils/getImageSrc";
 
 interface MatchListProps {
   matches?: MatchWithImages[];
@@ -43,7 +44,7 @@ const MatchList = (props: MatchListProps) => {
         >
           <div className="relative w-[150px] h-[150px]">
             <img
-              src={`data:image/jpeg;base64,${match.images[0]}`}
+              src={getImageSrc(match.images[0])}
               alt={match.name}
               className="w-full h-full object-cover rounded-lg"
             />

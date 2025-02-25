@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { matchesApi } from "@/api/endpoints";
+import { matchesApi } from "@/app/api/endpoints";
 
 export const matchesKeys = {
   all: ["matches"] as const,
