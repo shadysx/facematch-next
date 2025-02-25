@@ -1,16 +1,18 @@
 "use client";
 
 import ImageUploadButton from "@/components/common/UploadImageButton";
-import { useSearchMatches } from "@/hooks/queries/useMatches";
+import { useSearchMatchesWithImages } from "@/hooks/queries/useMatches";
+import { Skeleton } from "@/components/ui/skeleton";
+import { match } from "assert";
 
 export default function MatchesSFW() {
   const {
-    data: matchesNames,
+    data: matches,
     mutate: getMatchesNames,
     isPending,
     isError,
     error,
-  } = useSearchMatches();
+  } = useSearchMatchesWithImages();
 
   const handleImageSelected = (file: File) => {
     getMatchesNames(file);
@@ -18,9 +20,7 @@ export default function MatchesSFW() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Face Matches</h1>
-
-      {isPending && <p className="mt-4">Loading...</p>}
+      <h1 className="text-2xl text-center font-bold mb-4">Face Matches</h1>
 
       {isError && (
         <p className="mt-4 text-red-500">
@@ -29,9 +29,7 @@ export default function MatchesSFW() {
       )}
 
       <ImageUploadButton onImageSelected={handleImageSelected} />
-      {matchesNames?.map((match) => (
-        <h2 key={match}>{match}</h2>
-      ))}
+      <div className="h-4" />
     </div>
   );
 }
