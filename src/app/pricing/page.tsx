@@ -67,7 +67,7 @@ export default function PricingPage() {
             </Card>
 
             {/* Pro Tier */}
-            <Card className="border-primary relative">
+            <Card className="border-primary relative z-0">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                 <Badge variant="default" className="bg-primary">
                   <Zap className="h-4 w-4 mr-1" />

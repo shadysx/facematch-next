@@ -1,3 +1,4 @@
+"use client"
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -7,8 +8,17 @@ import {
   NavigationMenuContent,
 } from "@/components/ui/navigation-menu";
 import { ToggleThemeButton } from "../shadcn/ToggleThemeButton";
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "../ui/button";
 
 export default function HeaderMenu() {
+  const session = authClient.useSession();
+
+  const handleSignOut = async () => {
+    await authClient.signOut();
+  };
+
   return (
     <header className="border-b">
       <div className="container mx-auto p-4 flex items-center justify-between">
@@ -53,7 +63,33 @@ export default function HeaderMenu() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <ToggleThemeButton />
+        <div className="flex items-center gap-4">
+          {session.data ? (
+            <Button 
+              variant="ghost"
+              onClick={handleSignOut}
+              className="text-sm font-medium"
+            >
+              Sign out
+            </Button>
+          ) : (
+            <>
+              <Link 
+                href="/signin"
+                className="text-sm font-medium hover:text-primary"
+              >
+                Sign in
+              </Link>
+              <Link 
+                href="/signup"
+                className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
+          <ToggleThemeButton />
+        </div>
       </div>
     </header>
   );
