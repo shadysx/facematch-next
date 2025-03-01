@@ -35,7 +35,7 @@ export default function SignUpModal() {
       email: data.email, 
       name: data.name,
       password: data.password, 
-      callbackURL: "/matches-sfw" 
+      callbackURL: "/brains" 
 
   }, {
       onError: (ctx) => {

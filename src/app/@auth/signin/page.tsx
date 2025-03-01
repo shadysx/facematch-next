@@ -34,7 +34,7 @@ export default function SignInModal() {
       const { data: signInData } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
-        callbackURL: "/matches-sfw",
+        callbackURL: "/brains",
       }, {
           onError: (ctx) => {
             setLoginError(ctx.error.message)

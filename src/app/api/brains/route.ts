@@ -49,7 +49,9 @@ export async function POST(req: Request) {
 
     const existingBrain = await prisma.brain.findFirst({
         where: {
-            name,
+            name: {
+                equals: name.toLowerCase()
+            },
             userId: session.user.id
         }
     })
@@ -66,9 +68,9 @@ export async function POST(req: Request) {
 
 
 
-    const brain = await prisma.brain.create({ 
+    const brain = await prisma.brain.create({
         data: {
-            name,
+            name: name.toLowerCase(),
             userId: session.user.id
         }
     })

@@ -11,7 +11,7 @@ export const brainsKeys = {
 
 export function useGetBrains() {
     return useQuery({
-        queryKey: brainsKeys.list("brains"),
+        queryKey: brainsKeys.lists(),
         queryFn: () => brainsApi.getBrains()
     });
 }
@@ -22,7 +22,6 @@ export function useCreateBrain() {
     return useMutation({
         mutationFn: (name: string) => brainsApi.createBrain(name),
         onSuccess: () => {
-            // Invalider et recharger la liste des brains après création
             queryClient.invalidateQueries({ queryKey: brainsKeys.lists() });
         }
     });
