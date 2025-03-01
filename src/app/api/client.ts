@@ -3,10 +3,9 @@ import axios from "axios";
 export async function fetchApi<T>(
   url: string,
   options?: {
-    method?: "GET" | "POST";
-    body?: FormData | Record<string, any>;
+    method?: "GET" | "POST" | "DELETE";
+    body?: FormData | Record<string, string>;
     headers?: Record<string, string>;
-    [key: string]: any;
   }
 ): Promise<T> {
   try {
@@ -39,11 +38,22 @@ export async function fetchApi<T>(
       return response.data;
     }
 
+    if (method === "DELETE") {
+      const response = await axios.delete(url, {
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+        },
+        ...options,
+      });
+      return response.data;
+    }
+
     throw new Error(`Unsupported method: ${method}`);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
-        `API error: ${error.response?.status || "Unknown"} - ${error.message}`
+        `${error.response?.data.error || "Unknown error"}`
       );
     }
     throw error;

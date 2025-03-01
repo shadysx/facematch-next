@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-const GoogleImages = require('google-images');
+import GoogleImages from 'google-images';
 
 const client = new GoogleImages(
   process.env.GOOGLE_CSE_ID,
@@ -11,19 +11,27 @@ export async function GET(request: Request) {
   const query = searchParams.get('q');
 
   if (!query) {
-    return NextResponse.json(
-      { error: 'Query parameter is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({
+      error: {
+        code: 'MISSING_QUERY',
+        message: 'Query parameter is required',
+        status: 400
+      }
+    });
   }
 
   try {
     const results = await client.search(query);
-    return NextResponse.json(results[0].url);
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch images' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      data: results[0].url
+    });
+  } catch {
+    return NextResponse.json({
+      error: {
+        code: 'GOOGLE_SEARCH_FAILED',
+        message: 'Failed to fetch images',
+        status: 500,
+      }
+    });
   }
 }

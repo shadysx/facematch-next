@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { MatchWithImages } from "@/types/matchWithImages";
+import { MatchWithImages } from "@/models/api/MatchWithImages";
 import { snakeCaseToTitleCase } from "../../../utils/snakeCaseToTitleCase";
 import { getImageSrc } from "../../../utils/getImageSrc";
 

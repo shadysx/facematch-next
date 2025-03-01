@@ -31,7 +31,7 @@ export default function MatchesSFW() {
       <ImageUploadButton onImageSelected={handleImageSelected} />
       <div className="h-4" />
       <MatchResult
-        matchName={matches?.[0] ?? ""}
+        matchName={matches?.data?.[0] ?? ""}
         className="mt-8"
         isLoading={isPending}
       />

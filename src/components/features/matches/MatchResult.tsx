@@ -2,8 +2,6 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { snakeCaseToTitleCase } from "@/utils/snakeCaseToTitleCase";
-import { googleSearchApi } from "@/app/api/endpoints/google-search";
-import { useEffect, useState } from "react";
 import { useGoogleImage } from "@/hooks/queries/useGoogleImage";
 
 interface MatchResultProps {

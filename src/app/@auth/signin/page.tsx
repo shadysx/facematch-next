@@ -30,7 +30,6 @@ export default function SignInModal() {
 
   const onSubmit: SubmitHandler<SignInForm> = async (data) => {
     setLoginError(null) 
-    console.log("Submitting...", data)
     try {
       const { data: signInData } = await authClient.signIn.email({
         email: data.email,
@@ -41,9 +40,7 @@ export default function SignInModal() {
             setLoginError(ctx.error.message)
           },
       })
-      console.log("SignInData", signInData)
-    } catch (err) {
-      console.log("Unexpected error", err)
+    } catch {
     }
   }
 

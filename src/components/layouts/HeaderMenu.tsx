@@ -11,12 +11,19 @@ import { ToggleThemeButton } from "../shadcn/ToggleThemeButton";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
-
+import { useRouter } from "next/navigation";
 export default function HeaderMenu() {
   const session = authClient.useSession();
+  const router = useRouter();
 
   const handleSignOut = async () => {
-    await authClient.signOut();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/"); 
+        },
+      },
+    });
   };
 
   return (
