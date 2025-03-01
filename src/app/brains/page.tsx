@@ -6,13 +6,19 @@ import { BrainTile } from "@/components/features/brains/BrainTile"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Loader } from "lucide-react"
+import { Sparkles, Loader, Brain, Lock, ArrowRight, Star } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
+import GetStarted from "@/components/features/brains/GetStarted"
 
 interface IFormInputs {
   name: string
 }
 
 export default function BrainsPage() {
+  const session = authClient.useSession()
+  const router = useRouter()
+  
   const { handleSubmit, control } = useForm<IFormInputs>({
     defaultValues: {
       name: "",
@@ -25,6 +31,10 @@ export default function BrainsPage() {
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     createBrain(data.name)
+  }
+
+  if (!session.data) {
+    return <GetStarted />
   }
 
   return (
