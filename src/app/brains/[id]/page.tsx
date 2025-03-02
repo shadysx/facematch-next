@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { useState } from "react"
+import { useState, useCallback } from "react"
 
 export default function BrainDetailPage() {
   const params = useParams()
@@ -18,7 +18,6 @@ export default function BrainDetailPage() {
   const [isTraining, setIsTraining] = useState(false)
   const [trainingProgress, setTrainingProgress] = useState(0)
 
-  // Handlers pour le drag & drop
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
@@ -28,11 +27,42 @@ export default function BrainDetailPage() {
     setIsDragging(false)
   }
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    // Logique d'upload à implémenter
-  }
+  const uploadFiles = async (files: File[]) => {
+    try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const response = await fetch(`/api/files/${brainId}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+    }
+  };
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      uploadFiles(droppedFiles);
+    }
+  }, [brainId]);
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) {
+      const selectedFiles = Array.from(e.target.files);
+      uploadFiles(selectedFiles);
+    }
+  }, [brainId]);
 
   if (isLoading) {
     return (
@@ -110,7 +140,7 @@ export default function BrainDetailPage() {
         </div>
       </div>
 
-      {/* Section Training */}
+      {/* Training Section */}
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <Card className="border-2 border-dashed border-purple-200 dark:border-purple-300/20 overflow-hidden">
@@ -184,7 +214,7 @@ export default function BrainDetailPage() {
                   </div>
                 </div>
 
-                {/* Zone de drop */}
+                {/* Dropzone */}
                 <div className="lg:col-span-3 p-6">
                   <div
                     onDragOver={handleDragOver}
@@ -211,10 +241,20 @@ export default function BrainDetailPage() {
                       <p className="text-gray-500 dark:text-gray-400 text-center max-w-sm mb-6">
                         Drag and drop your training folder here, or click to select files
                       </p>
-                      <Button variant="outline" size="sm">
-                        Browse Files
-                      </Button>
+                      <label htmlFor="file-upload">
+                        <Button variant="outline" size="sm" asChild>
+                          <span>Browse Files</span>
+                        </Button>
+                      </label>
                     </motion.div>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileSelect}
+                      accept="image/*"
+                    />
                   </div>
                 </div>
               </div>
