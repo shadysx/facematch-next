@@ -1,8 +1,9 @@
 import StatusCard from "./StatusCard"
 
 import { Badge } from "@/components/ui/badge"
-import { Calendar, ChevronRight, Link } from "lucide-react"
+import { Calendar, ChevronRight } from "lucide-react"
 import { formatDisplayName } from "@/utils/formatDisplayName"
+import Link from "next/link"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { useBrainStatus } from "@/hooks/queries/useBrains"
@@ -15,7 +16,7 @@ const BrainDetailsHeader = (props: BrainDetailHeaderProps) => {
     const { brain } = props
     const { data: brainStatus } = useBrainStatus(brain.id)
     return (
-        < Card className="border-2 border border-purple-200 dark:border-purple-300/20 overflow-hidden" >
+        <Card className="border-2 border border-purple-200 dark:border-purple-300/20 overflow-hidden" >
             <CardContent className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/10 dark:to-blue-900/10">
                 <div className="flex items-center justify-between">
                     <div>

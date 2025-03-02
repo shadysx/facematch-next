@@ -17,10 +17,12 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { SignInForm, signInFormDefaultValues, signInValidationSchema } from "@/lib/form-validation/signInValidationSchema"
 import { authClient } from "@/lib/auth-client"
 import { useState } from "react"
+import { LoadingButton } from "@/components/common/LoadingButton"
 
 export default function SignInModal() {
   const router = useRouter()
   const [loginError, setLoginError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { control, handleSubmit, formState: { errors } } = useForm<SignInForm>({
     defaultValues: signInFormDefaultValues,
@@ -36,9 +38,11 @@ export default function SignInModal() {
         password: data.password!,
         callbackURL: "/brains",
       }, {
+        onRequest: () => setIsLoading(true),
         onError: (ctx) => {
           setLoginError(ctx.error.message)
         },
+        onResponse: () => setIsLoading(false),
       })
     } catch {
     }
@@ -100,12 +104,13 @@ export default function SignInModal() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button
+            <LoadingButton
+              isLoading={isLoading}
               type="submit"
               className="w-full"
             >
               Sign in
-            </Button>
+            </LoadingButton>
 
             <Button
               variant="link"

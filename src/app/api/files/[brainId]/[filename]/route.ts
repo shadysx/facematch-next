@@ -1,66 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { withBrainAccess } from '@/lib/api-middleware';
 
 export async function GET(
     request: NextRequest,
     { params }: { params: { brainId: string; filename: string } }
 ) {
-    try {
-        const session = await auth.api.getSession({
-            headers: await headers()
-        });
+    const { brainId, filename } = await params;
 
-        if (!session?.user) {
+    return withBrainAccess(request, brainId, async (session) => {
+        try {
+            const response = await axios.get(
+                `http://127.0.0.1:8000/ai/users/${session.userId}/brains/${brainId}/files/${filename}`,
+                {
+                    responseType: 'arraybuffer'
+                }
+            );
+
+            const blob = new Blob([response.data], {
+                type: response.headers['content-type']
+            });
+
+            return new NextResponse(blob, {
+                headers: {
+                    'Content-Type': response.headers['content-type'],
+                    'Content-Disposition': `inline; filename="${filename}"`
+                }
+            });
+        } catch {
             return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
+                { error: 'Failed to fetch image' },
+                { status: 500 }
             );
         }
-
-        const { brainId, filename } = await params;
-
-        const userHasAccessToBrain = await prisma.brain.findUnique({
-            where: {
-                id: brainId,
-                userId: session.user.id
-            }
-        })
-
-        if (!userHasAccessToBrain) {
-            return NextResponse.json(
-                { error: 'User does not have access to this brain' },
-                { status: 403 }
-            );
-        }
-
-        const response = await axios.get(
-            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${brainId}/files/${filename}`,
-            {
-                responseType: 'arraybuffer'
-            }
-        );
-
-        const blob = new Blob([response.data], {
-            type: response.headers['content-type']
-        });
-
-        return new NextResponse(blob, {
-            headers: {
-                'Content-Type': response.headers['content-type'],
-                'Content-Disposition': `inline; filename="${filename}"`
-            }
-        });
-
-    } catch (error) {
-        console.error('Error fetching image:', error);
-        return NextResponse.json(
-            { error: 'Failed to fetch image' },
-            { status: 500 }
-        );
-    }
+    })
 } 

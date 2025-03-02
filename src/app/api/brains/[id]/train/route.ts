@@ -1,56 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
 import axios from 'axios';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { withBrainAccess } from '@/lib/api-middleware';
 
 export async function POST(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    try {
-        const { id } = await params;
-        const session = await auth.api.getSession({
-            headers: await headers()
-        });
+    const { id } = await params;
 
-        if (!session?.user) {
+    return withBrainAccess(request, id, async (session) => {
+        try {
+            const response = await axios.post(
+                `http://127.0.0.1:8000/ai/users/${session.userId}/brains/${id}/train`
+            );
+
+            return NextResponse.json(response.data);
+        } catch {
             return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
+                { error: 'Failed to train brain' },
+                { status: 500 }
             );
         }
-
-        const userHasAccessToBrain = await prisma.brain.findUnique({
-            where: {
-                id,
-                userId: session.user.id
-            }
-        })
-
-        if (!userHasAccessToBrain) {
-            return NextResponse.json(
-                { error: 'User does not have access to this brain' },
-                { status: 403 }
-            );
-        }
-
-
-        const response = await axios.post(
-            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${id}/train`
-        );
-
-        console.log(response.data)
-
-        return NextResponse.json(response.data);
-
-    } catch (error) {
-        console.error('Error training brain:', error);
-        return NextResponse.json(
-            { error: 'Failed to train brain' },
-            { status: 500 }
-        );
-    }
+    })
 }

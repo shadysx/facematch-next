@@ -7,15 +7,12 @@ import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Sparkles, Loader } from "lucide-react"
-import { authClient } from "@/lib/auth-client"
-import GetStarted from "@/components/features/brains/GetStarted"
 
 interface IFormInputs {
   name: string
 }
 
 export default function BrainsPage() {
-  const session = authClient.useSession()
 
   const { handleSubmit, control } = useForm<IFormInputs>({
     defaultValues: {
@@ -31,11 +28,6 @@ export default function BrainsPage() {
     createBrain(data.name)
   }
 
-
-  // TODO: Use middleware to redirect to login page if user is not authenticated or protected route
-  if (!session.data) {
-    return <GetStarted />
-  }
 
   return (
     <motion.div
