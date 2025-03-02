@@ -11,7 +11,7 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     const session = await auth.api.getSession({
-        headers: await headers() 
+        headers: await headers()
     })
 
     if (!session?.user) {
@@ -32,36 +32,33 @@ export async function DELETE(
             return NextResponse.json({ error: 'User does not have access to this brain' }, { status: 403 })
         }
 
-        // Delete the brain on the database
-        await prisma.brain.delete({
-            where: {
-                id
+        const result = await prisma.$transaction(async (tx) => {
+            // Delete the brain on the database
+            const brain = await tx.brain.delete({
+                where: {
+                    id
+                }
+            })
+
+            // Delete the brain on the AI-ENGINE
+            try {
+                await axios.delete(
+                    `http://127.0.0.1:8000/ai/brains?user_id=${session.user.id}&brain_id=${id}`,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+            } catch (error) {
+                throw new Error(`AI-ENGINE Error: ${axios.isAxiosError(error)}`);
             }
+
+            return brain
         })
 
-        // Delete the brain on the AI-ENGINE
-        try {
-            await axios.delete(
-                `http://127.0.0.1:8000/ai/brains?user_id=${session.user.id}&brain_id=${id}`,
-                {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('AI-ENGINE Error:', error.response?.data);
-                return NextResponse.json(
-                    { error: 'Error deleting brain on AI-ENGINE' },
-                    { status: 500 }
-                );
-            }
-        }
-
-
-        return NextResponse.json({ success: true }, { status: 200 })
+        return NextResponse.json(result, { status: 200 })
     } catch {
         return NextResponse.json({ error: 'Failed to delete brain' }, { status: 500 })
     }

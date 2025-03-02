@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { useGetBrains } from "@/hooks/queries/useBrains" 
+import { useGetBrains } from "@/hooks/queries/useBrains"
 import { motion } from "framer-motion"
 import { Brain, Upload, Cpu, Calendar, Loader, Database, Zap, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -192,9 +192,9 @@ export default function BrainDetailPage() {
                     onDrop={handleDrop}
                     className={`flex flex-col items-center justify-center h-full min-h-[400px] rounded-xl
                               transition-all duration-300 cursor-pointer
-                              ${isDragging 
-                                ? 'bg-purple-100/50 dark:bg-purple-900/30 scale-[0.99]' 
-                                : 'bg-gray-50/50 dark:bg-purple-900/10'}`}
+                              ${isDragging
+                        ? 'bg-purple-100/50 dark:bg-purple-900/30 scale-[0.99]'
+                        : 'bg-gray-50/50 dark:bg-purple-900/10'}`}
                   >
                     <motion.div
                       initial={{ scale: 1 }}
@@ -202,9 +202,9 @@ export default function BrainDetailPage() {
                       className="text-center"
                     >
                       <Upload className={`w-16 h-16 mx-auto mb-4 transition-colors duration-300
-                                     ${isDragging 
-                                       ? 'text-purple-600 dark:text-purple-400' 
-                                       : 'text-gray-400 dark:text-gray-600'}`} />
+                                     ${isDragging
+                          ? 'text-purple-600 dark:text-purple-400'
+                          : 'text-gray-400 dark:text-gray-600'}`} />
                       <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
                         Drop Training Data
                       </h3>

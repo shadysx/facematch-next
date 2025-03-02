@@ -16,7 +16,7 @@ interface IFormInputs {
 
 export default function BrainsPage() {
   const session = authClient.useSession()
-  
+
   const { handleSubmit, control } = useForm<IFormInputs>({
     defaultValues: {
       name: "",
@@ -25,7 +25,7 @@ export default function BrainsPage() {
 
   const { mutate: createBrain, error } = useCreateBrain()
   const { data: brains, isLoading } = useGetBrains()
-  const { mutate: deleteBrain } = useDeleteBrain()
+  const { mutate: deleteBrain, error: deleteError } = useDeleteBrain()
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     createBrain(data.name)
@@ -38,13 +38,13 @@ export default function BrainsPage() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="container mx-auto p-8"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <motion.div 
+        <motion.div
           initial={{ x: -20 }}
           animate={{ x: 0 }}
           className="lg:col-span-3 lg:sticky lg:top-8 lg:self-start"
@@ -93,7 +93,7 @@ export default function BrainsPage() {
                 {isLoading ? 'Creating...' : 'Initialize'}
               </Button>
               {error && (
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="text-red-400 text-sm"
@@ -101,12 +101,22 @@ export default function BrainsPage() {
                   {error.message}
                 </motion.p>
               )}
+              {/* TODO: use toast */}
+              {deleteError && (
+                <motion.p
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-red-400 text-sm"
+                >
+                  {deleteError.message}
+                </motion.p>
+              )}
             </form>
           </div>
         </motion.div>
 
         <div className="lg:col-span-9">
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
             variants={{
               hidden: { opacity: 0 },
@@ -139,7 +149,7 @@ export default function BrainsPage() {
           </motion.div>
 
           {isLoading && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="flex justify-center items-center mt-8"
