@@ -140,7 +140,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
               className="flex items-center gap-2"
             >
               <Cpu className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-gray-700 dark:text-purple-300 font-medium">Neural Engine</span>
+              <span className="text-gray-700 dark:text-purple-300 font-medium">Face Recognition</span>
             </div>
 
             <StatusCard brainStatus={brainStatus} />

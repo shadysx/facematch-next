@@ -1,12 +1,12 @@
 import { fetchApi } from "../client";
 
-interface FileInfo {
+export interface FileInfo {
     name: string;
     path: string;
     size: number;
 }
 
-interface FilesResponse {
+export interface FilesResponse {
     status: string;
     files: FileInfo[];
     total: number;

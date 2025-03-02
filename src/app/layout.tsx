@@ -4,7 +4,6 @@ import "./globals.css";
 import { ReactQueryProvider } from "@/lib/react-query/provider";
 import { ThemeProvider } from "@/components/shadcn/themeProvider";
 import HeaderMenu from "@/components/layouts/HeaderMenu";
-import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
