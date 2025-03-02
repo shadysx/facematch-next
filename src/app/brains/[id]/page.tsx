@@ -34,16 +34,16 @@ export default function BrainDetailPage() {
 
   console.log("files", files)
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
-  }, [])
+  }
 
-  const handleDragLeave = useCallback(() => {
+  const handleDragLeave = () => {
     setIsDragging(false)
-  }, [])
+  }
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
@@ -51,14 +51,14 @@ export default function BrainDetailPage() {
     if (droppedFiles.length > 0) {
       uploadFiles(droppedFiles);
     }
-  }, [brainId]);
+  }
 
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       const selectedFiles = Array.from(e.target.files);
       uploadFiles(selectedFiles);
     }
-  }, [brainId]);
+  }
 
   const handleTrainBrain = () => {
     trainBrain(brainId)
