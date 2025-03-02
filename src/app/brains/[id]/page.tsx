@@ -9,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { useState, useCallback } from "react"
+import { useGetFiles, useUploadFiles } from "@/hooks/queries/useFiles"
+import { formatBytesToMb, formatBytesToMbStr } from "@/utils/formatBytesToMb"
 
 export default function BrainDetailPage() {
   const params = useParams()
@@ -16,7 +18,6 @@ export default function BrainDetailPage() {
   const { data: brains, isLoading } = useGetBrains()
   const [isDragging, setIsDragging] = useState(false)
   const [isTraining, setIsTraining] = useState(false)
-  const [trainingProgress, setTrainingProgress] = useState(0)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -27,25 +28,10 @@ export default function BrainDetailPage() {
     setIsDragging(false)
   }
 
-  const uploadFiles = async (files: File[]) => {
-    try {
-      const formData = new FormData();
-      files.forEach((file) => {
-        formData.append('files', file);
-      });
+  const { data, isLoading: isLoadingFiles } = useGetFiles(brainId)
+  const { total_size = 0, total = 0, files = [] } = data || {}
 
-      const response = await fetch(`/api/files/${brainId}`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-    }
-  };
+  const { mutate: uploadFiles } = useUploadFiles(brainId)
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -146,7 +132,7 @@ export default function BrainDetailPage() {
           <Card className="border-2 border-dashed border-purple-200 dark:border-purple-300/20 overflow-hidden">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-5">
-                {/* Panneau latéral avec les stats */}
+                {/* Left panel with training stats */}
                 <div className="lg:col-span-2 p-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/10 dark:to-blue-900/10">
                   <div className="space-y-6">
                     <div>
@@ -157,9 +143,9 @@ export default function BrainDetailPage() {
                         <div>
                           <div className="flex justify-between mb-2">
                             <span className="text-sm text-gray-600 dark:text-gray-400">Dataset Size</span>
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">1122 images</span>
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{total} images</span>
                           </div>
-                          <Progress value={67} className="h-2" />
+                          <Progress value={formatBytesToMb(total_size) / 500 * 100} className="h-2" />
                         </div>
                         <Card className="bg-white/50 dark:bg-gray-800/50">
                           <CardContent className="p-4">
@@ -167,7 +153,7 @@ export default function BrainDetailPage() {
                               <Database className="w-5 h-5 text-purple-500" />
                               <div>
                                 <p className="text-sm text-gray-600 dark:text-gray-400">Storage Used</p>
-                                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">1.2 GB</p>
+                                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">{formatBytesToMbStr(total_size)} MB / 500 MB</p>
                               </div>
                             </div>
                           </CardContent>

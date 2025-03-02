@@ -21,14 +21,14 @@ export async function DELETE(
     const { id } = await params
 
     try {
-        const isBrainFromUser = await prisma.brain.findUnique({
+        const userHasAccessToBrain = await prisma.brain.findUnique({
             where: {
                 id,
                 userId: session.user.id
             }
         })
 
-        if (!isBrainFromUser) {
+        if (!userHasAccessToBrain) {
             return NextResponse.json({ error: 'User does not have access to this brain' }, { status: 403 })
         }
 

@@ -3,10 +3,67 @@ import axios from 'axios';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { FormData } from 'formdata-node';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        })
+
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
+
+        const { id } = await params;
+
+        if (!id) {
+            return NextResponse.json(
+                { error: 'Brain ID is required' },
+                { status: 400 }
+            );
+        }
+
+        const userHasAccessToBrain = await prisma.brain.findUnique({
+            where: {
+                id,
+                userId: session.user.id
+            }
+        })
+
+        if (!userHasAccessToBrain) {
+            return NextResponse.json(
+                { error: 'User does not have access to this brain' },
+                { status: 403 }
+            );
+        }
+
+        const response = await axios.get(
+            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${id}/files`
+        );
+
+        return NextResponse.json(response.data);
+
+    } catch (error) {
+        console.error('Error fetching files:', error);
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
+    }
+}
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { brainId: string } }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await auth.api.getSession({
@@ -24,6 +81,7 @@ export async function POST(
         const files = formData.getAll('files');
 
 
+
         if (!files || files.length === 0) {
             return NextResponse.json(
                 { error: 'No files provided' },
@@ -31,7 +89,28 @@ export async function POST(
             );
         }
 
-        const { brainId } = await params;
+        const { id } = await params;
+
+        if (!id) {
+            return NextResponse.json(
+                { error: 'Brain ID is required' },
+                { status: 400 }
+            );
+        }
+
+        const userHasAccessToBrain = await prisma.brain.findUnique({
+            where: {
+                id,
+                userId: session.user.id
+            }
+        })
+
+        if (!userHasAccessToBrain) {
+            return NextResponse.json(
+                { error: 'User does not have access to this brain' },
+                { status: 403 }
+            );
+        }
 
         const apiFormData = new FormData();
         files.forEach((file) => {
@@ -39,7 +118,7 @@ export async function POST(
         });
 
         const response = await axios.post(
-            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${brainId}/files`,
+            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${id}/files`,
             apiFormData,
             {
                 headers: {

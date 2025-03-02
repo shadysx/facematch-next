@@ -27,9 +27,9 @@ export async function fetchApi<T>(
       const headers = isFormData
         ? { ...options?.headers }
         : {
-            "Content-Type": "application/json",
-            ...options?.headers,
-          };
+          "Content-Type": "application/json",
+          ...options?.headers,
+        };
 
       const response = await axios.post(url, options?.body, {
         headers,
