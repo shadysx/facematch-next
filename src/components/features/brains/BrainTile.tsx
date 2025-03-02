@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { formatDisplayName } from "@/utils/formatDisplayName"
 import { useRouter } from "next/navigation"
-import { BrainStatus } from "@/enums/BrainStatus"
 import { useBrainStatus } from "@/hooks/queries/useBrains"
+import StatusCard from "@/components/features/brains/StatusCard"
+
 interface BrainTileProps {
   brain: Brain
   onDelete: (id: string) => void
@@ -29,7 +30,6 @@ interface BrainTileProps {
 export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: BrainTileProps) {
   const router = useRouter()
   const { data: brainStatus } = useBrainStatus(brain.id)
-  const isTraining = brainStatus === BrainStatus.TRAINING
 
   return (
     <motion.div
@@ -143,27 +143,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
               <span className="text-gray-700 dark:text-purple-300 font-medium">Neural Engine</span>
             </div>
 
-            {isTraining && (
-              <motion.div
-                className="flex items-center gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <motion.span
-                  className="inline-block w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400"
-                  animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [1, 0.7, 1]
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-                <span className="text-blue-600 dark:text-blue-300 text-sm">Processing</span>
-              </motion.div>
-            )}
+            <StatusCard brainStatus={brainStatus} />
           </div>
         </CardFooter>
       </Card>

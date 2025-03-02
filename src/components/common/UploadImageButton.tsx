@@ -31,7 +31,6 @@ export default function ImageUploadButton({
         {isLoading ? "Loading..." : "Select an image"}
       </Button>
 
-      {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}

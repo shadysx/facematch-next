@@ -14,14 +14,14 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { SignInForm, signInFormDefaultValues, signInValidationSchema} from "@/lib/form-validation/signInValidationSchema"
+import { SignInForm, signInFormDefaultValues, signInValidationSchema } from "@/lib/form-validation/signInValidationSchema"
 import { authClient } from "@/lib/auth-client"
 import { useState } from "react"
 
 export default function SignInModal() {
   const router = useRouter()
   const [loginError, setLoginError] = useState<string | null>(null)
-  
+
   const { control, handleSubmit, formState: { errors } } = useForm<SignInForm>({
     defaultValues: signInFormDefaultValues,
     resolver: yupResolver(signInValidationSchema),
@@ -29,27 +29,27 @@ export default function SignInModal() {
   })
 
   const onSubmit: SubmitHandler<SignInForm> = async (data) => {
-    setLoginError(null) 
+    setLoginError(null)
     try {
-      const { data: signInData } = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
+      await authClient.signIn.email({
+        email: data.email!,
+        password: data.password!,
         callbackURL: "/brains",
       }, {
-          onError: (ctx) => {
-            setLoginError(ctx.error.message)
-          },
+        onError: (ctx) => {
+          setLoginError(ctx.error.message)
+        },
       })
     } catch {
     }
   }
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
       onClick={() => router.back()}
     >
-      <Card 
+      <Card
         className="w-[400px] shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
@@ -68,7 +68,7 @@ export default function SignInModal() {
                 name="email"
                 control={control}
                 render={({ field }) => (
-                  <Input 
+                  <Input
                     {...field}
                     id="email"
                     type="email"
@@ -86,7 +86,7 @@ export default function SignInModal() {
                 name="password"
                 control={control}
                 render={({ field }) => (
-                  <Input 
+                  <Input
                     {...field}
                     id="password"
                     type="password"
@@ -96,23 +96,23 @@ export default function SignInModal() {
               {errors.password && (
                 <p className="text-sm text-red-500">{errors.password.message}</p>
               )}
-           
+
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button 
+            <Button
               type="submit"
               className="w-full"
             >
               Sign in
             </Button>
 
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               className="text-sm text-muted-foreground"
               onClick={() => router.push("/signup")}
             >
-              Don't have an account? Sign up
+              Don&apos;t have an account? Sign up
             </Button>
             {/* TODO: Add a toast for the error */}
             {loginError && (

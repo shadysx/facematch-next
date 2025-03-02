@@ -16,6 +16,8 @@ import { Separator } from "@/components/ui/separator"
 import NextImage from "next/image"
 import { formatDisplayName } from "@/utils/formatDisplayName"
 import { BrainStatus } from "@/enums/BrainStatus"
+import StatusCard from "@/components/features/brains/StatusCard"
+import LinearGradiantAnimatedButton from "@/components/common/LinearGradiantAnimatedButton"
 
 export default function BrainDetailPage() {
   const params = useParams()
@@ -28,17 +30,18 @@ export default function BrainDetailPage() {
   const { total_size = 0, total = 0, files = [] } = data || {}
   const { mutate: uploadFiles } = useUploadFiles(brainId)
   const { data: brainStatus } = useBrainStatus(brainId)
-  const isTraining = brainStatus === BrainStatus.TRAINING
   const { mutate: trainBrain } = useTrainBrain();
 
-  const handleDragOver = (e: React.DragEvent) => {
+  console.log("files", files)
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
-  }
+  }, [])
 
-  const handleDragLeave = () => {
+  const handleDragLeave = useCallback(() => {
     setIsDragging(false)
-  }
+  }, [])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -116,23 +119,7 @@ export default function BrainDetailPage() {
                 <span>Created on {new Date(brain.createdAt).toLocaleString()}</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Card className="bg-purple-50 dark:bg-purple-900/20 border-0">
-                <CardContent className="p-3">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                      <Brain className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                        {isTraining ? "Training" : "Ready"}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <StatusCard brainStatus={brainStatus} />
           </div>
         </div>
       </div>
@@ -187,27 +174,12 @@ export default function BrainDetailPage() {
                         </li>
                       </ul>
                     </div>
-
-                    <Button
-                      size="lg"
-                      onClick={() => handleTrainBrain()}
-                      disabled={isTraining}
-                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700
-                               text-white font-medium py-6 rounded-xl transition-all duration-300 
-                               shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-3"
-                    >
-                      {isTraining ? (
-                        <>
-                          <Loader className="w-5 h-5 animate-spin" />
-                          Training in Progress...
-                        </>
-                      ) : (
-                        <>
-                          <Cpu className="w-5 h-5" />
-                          Start Training
-                        </>
-                      )}
-                    </Button>
+                    <LinearGradiantAnimatedButton
+                      buttonText="Start Training"
+                      isLoading={brainStatus === BrainStatus.TRAINING}
+                      loadingText="Training in Progress..."
+                      onClick={handleTrainBrain}
+                    />
                   </div>
                 </div>
 
