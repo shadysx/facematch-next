@@ -9,12 +9,12 @@ const prisma = new PrismaClient();
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: { brainId: string } }
 ) {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
-        })
+        });
 
         if (!session?.user) {
             return NextResponse.json(
@@ -23,31 +23,8 @@ export async function GET(
             );
         }
 
-        const { id } = await params;
-
-        if (!id) {
-            return NextResponse.json(
-                { error: 'Brain ID is required' },
-                { status: 400 }
-            );
-        }
-
-        const userHasAccessToBrain = await prisma.brain.findUnique({
-            where: {
-                id,
-                userId: session.user.id
-            }
-        })
-
-        if (!userHasAccessToBrain) {
-            return NextResponse.json(
-                { error: 'User does not have access to this brain' },
-                { status: 403 }
-            );
-        }
-
         const response = await axios.get(
-            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${id}/files`
+            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${params.brainId}/files`
         );
 
         return NextResponse.json(response.data);
@@ -55,7 +32,7 @@ export async function GET(
     } catch (error) {
         console.error('Error fetching files:', error);
         return NextResponse.json(
-            { error: 'Internal server error' },
+            { error: 'Failed to fetch files' },
             { status: 500 }
         );
     }
@@ -63,7 +40,7 @@ export async function GET(
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: { brainId: string } }
 ) {
     try {
         const session = await auth.api.getSession({
@@ -89,9 +66,9 @@ export async function POST(
             );
         }
 
-        const { id } = await params;
+        const { brainId } = await params;
 
-        if (!id) {
+        if (!brainId) {
             return NextResponse.json(
                 { error: 'Brain ID is required' },
                 { status: 400 }
@@ -100,7 +77,7 @@ export async function POST(
 
         const userHasAccessToBrain = await prisma.brain.findUnique({
             where: {
-                id,
+                id: brainId,
                 userId: session.user.id
             }
         })
@@ -118,7 +95,7 @@ export async function POST(
         });
 
         const response = await axios.post(
-            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${id}/files`,
+            `http://127.0.0.1:8000/ai/users/${session.user.id}/brains/${brainId}/files`,
             apiFormData,
             {
                 headers: {

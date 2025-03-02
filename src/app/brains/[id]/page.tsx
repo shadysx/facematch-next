@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation"
 import { useGetBrains } from "@/hooks/queries/useBrains"
 import { motion } from "framer-motion"
-import { Brain, Upload, Cpu, Calendar, Loader, Database, Zap, ChevronRight } from "lucide-react"
+import { Brain, Upload, Cpu, Calendar, Loader, Database, Zap, ChevronRight, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -11,6 +11,10 @@ import { Badge } from "@/components/ui/badge"
 import { useState, useCallback } from "react"
 import { useGetFiles, useUploadFiles } from "@/hooks/queries/useFiles"
 import { formatBytesToMb, formatBytesToMbStr } from "@/utils/formatBytesToMb"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import NextImage from "next/image"
+import { formatDisplayName } from "@/utils/formatDisplayName"
 
 export default function BrainDetailPage() {
   const params = useParams()
@@ -18,6 +22,7 @@ export default function BrainDetailPage() {
   const { data: brains, isLoading } = useGetBrains()
   const [isDragging, setIsDragging] = useState(false)
   const [isTraining, setIsTraining] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<string | null>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -86,7 +91,7 @@ export default function BrainDetailPage() {
       animate={{ opacity: 1 }}
       className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-900"
     >
-      {/* Header avec infos basiques */}
+      {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl">
         <div className="container mx-auto py-6 px-4">
           <div className="flex items-center justify-between">
@@ -97,7 +102,7 @@ export default function BrainDetailPage() {
                 </Badge>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                  {brain.name}
+                  {formatDisplayName(brain.name)}
                 </h1>
               </div>
               <div className="flex items-center gap-2 mt-2 text-gray-600 dark:text-gray-400">
@@ -129,7 +134,7 @@ export default function BrainDetailPage() {
       {/* Training Section */}
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-6xl mx-auto">
-          <Card className="border-2 border-dashed border-purple-200 dark:border-purple-300/20 overflow-hidden">
+          <Card className="border-2 border border-purple-200 dark:border-purple-300/20 overflow-hidden">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-5">
                 {/* Left panel with training stats */}
@@ -241,6 +246,72 @@ export default function BrainDetailPage() {
                       onChange={handleFileSelect}
                       accept="image/*"
                     />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="mt-8 border-2 border border-purple-200 dark:border-purple-300/20">
+            <CardContent className="p-0">
+              <div className="grid grid-cols-2 divide-x divide-purple-200 dark:divide-purple-300/20">
+                {/* Liste des fichiers */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      Files
+                    </h3>
+                    <Badge variant="outline">
+                      {total} files
+                    </Badge>
+                  </div>
+                  <ScrollArea className="h-[400px] pr-4">
+                    <div className="space-y-2">
+                      {files.map((file, index) => (
+                        <div key={index}>
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start gap-2 px-2"
+                            onClick={() => setSelectedFile(file.name)}
+                          >
+                            <ImageIcon className="h-4 w-4 text-purple-600" />
+                            <span className="truncate">{file.name}</span>
+                            <span className="ml-auto text-xs text-gray-500">
+                              {formatBytesToMbStr(file.size)} MB
+                            </span>
+                          </Button>
+                          {index < files.length - 1 && (
+                            <Separator className="my-2" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+
+                {/* Preview */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      Preview
+                    </h3>
+                  </div>
+                  <div className="flex items-center justify-center h-[400px] bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                    {selectedFile ? (
+                      <NextImage
+                        src={`/api/files/${brainId}/${selectedFile}`}
+                        alt={selectedFile}
+                        className="max-h-full max-w-full object-contain"
+                        width={500}
+                        height={500}
+                        priority
+                      />
+                    ) : (
+                      <div className="text-center text-gray-500 dark:text-gray-400">
+                        <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                        <p>Select a file to preview</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
