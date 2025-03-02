@@ -1,7 +1,7 @@
 "use client"
 
 import { useParams } from "next/navigation"
-import { useGetBrains } from "@/hooks/queries/useBrains"
+import { useBrainStatus, useGetBrains, useTrainBrain } from "@/hooks/queries/useBrains"
 import { motion } from "framer-motion"
 import { Brain, Upload, Cpu, Calendar, Loader, Database, Zap, ChevronRight, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -15,14 +15,21 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import NextImage from "next/image"
 import { formatDisplayName } from "@/utils/formatDisplayName"
+import { BrainStatus } from "@/enums/BrainStatus"
 
 export default function BrainDetailPage() {
   const params = useParams()
   const brainId = params.id as string
   const { data: brains, isLoading } = useGetBrains()
   const [isDragging, setIsDragging] = useState(false)
-  const [isTraining, setIsTraining] = useState(false)
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
+
+  const { data } = useGetFiles(brainId)
+  const { total_size = 0, total = 0, files = [] } = data || {}
+  const { mutate: uploadFiles } = useUploadFiles(brainId)
+  const { data: brainStatus } = useBrainStatus(brainId)
+  const isTraining = brainStatus === BrainStatus.TRAINING
+  const { mutate: trainBrain } = useTrainBrain();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -32,11 +39,6 @@ export default function BrainDetailPage() {
   const handleDragLeave = () => {
     setIsDragging(false)
   }
-
-  const { data, isLoading: isLoadingFiles } = useGetFiles(brainId)
-  const { total_size = 0, total = 0, files = [] } = data || {}
-
-  const { mutate: uploadFiles } = useUploadFiles(brainId)
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -54,6 +56,10 @@ export default function BrainDetailPage() {
       uploadFiles(selectedFiles);
     }
   }, [brainId]);
+
+  const handleTrainBrain = () => {
+    trainBrain(brainId)
+  }
 
   if (isLoading) {
     return (
@@ -184,7 +190,7 @@ export default function BrainDetailPage() {
 
                     <Button
                       size="lg"
-                      onClick={() => setIsTraining(true)}
+                      onClick={() => handleTrainBrain()}
                       disabled={isTraining}
                       className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700
                                text-white font-medium py-6 rounded-xl transition-all duration-300 

@@ -130,7 +130,7 @@ export default function BrainsPage() {
             initial="hidden"
             animate="show"
           >
-            {brains?.map((brain, index) => (
+            {brains?.map((brain) => (
               <motion.div
                 key={brain.id}
                 variants={{
@@ -142,7 +142,6 @@ export default function BrainsPage() {
                   brain={brain}
                   onDelete={(id) => deleteBrain(id)}
                   isLoading={isLoading}
-                  isProcessing={index === 0}
                 />
               </motion.div>
             ))}

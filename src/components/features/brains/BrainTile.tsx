@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { formatDisplayName } from "@/utils/formatDisplayName"
 import { useRouter } from "next/navigation"
+import { BrainStatus } from "@/enums/BrainStatus"
+import { useBrainStatus } from "@/hooks/queries/useBrains"
 interface BrainTileProps {
   brain: Brain
   onDelete: (id: string) => void
@@ -26,6 +28,8 @@ interface BrainTileProps {
 
 export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: BrainTileProps) {
   const router = useRouter()
+  const { data: brainStatus } = useBrainStatus(brain.id)
+  const isTraining = brainStatus === BrainStatus.TRAINING
 
   return (
     <motion.div
@@ -36,10 +40,10 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
     >
       <Card className="w-full backdrop-blur-lg dark:bg-gradient-to-br dark:from-purple-900/10 dark:to-blue-900/10 
                        border-gray-200 dark:border-purple-200/20 border rounded-xl overflow-hidden relative cursor-pointer"
-            onClick={() => {
-              router.push(`/brains/${brain.id}`)
-            }}
-          >
+        onClick={() => {
+          router.push(`/brains/${brain.id}`)
+        }}
+      >
         {isProcessing && (
           <div className="absolute top-0 left-0 right-0 h-1 overflow-hidden bg-gray-100 dark:bg-purple-900/20">
             <motion.div
@@ -68,7 +72,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <motion.h3 
+              <motion.h3
                 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-500 bg-clip-text text-transparent"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -76,7 +80,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
               >
                 {formatDisplayName(brain.name)}
               </motion.h3>
-              <motion.p 
+              <motion.p
                 className="text-sm text-gray-600 dark:text-purple-200/70 flex items-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -94,10 +98,10 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
             </div>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button 
+                <Button
                   onClick={(e) => e.stopPropagation()}
-                  variant="ghost" 
-                  size="icon" 
+                  variant="ghost"
+                  size="icon"
                   className="text-gray-500 hover:text-red-600 hover:bg-red-50 
                            dark:text-purple-300 dark:hover:text-red-400 dark:hover:bg-red-900/20 
                            transition-all duration-300 rounded-lg"
@@ -132,26 +136,26 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
         </CardContent>
         <CardFooter className="bg-gray-50/80 dark:bg-purple-900/20 border-t border-gray-200 dark:border-purple-300/10 py-3">
           <div className="flex items-center justify-between w-full">
-            <div 
+            <div
               className="flex items-center gap-2"
             >
               <Cpu className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span className="text-gray-700 dark:text-purple-300 font-medium">Neural Engine</span>
             </div>
-            
-            {isProcessing && (
-              <motion.div 
+
+            {isTraining && (
+              <motion.div
                 className="flex items-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
                 <motion.span
                   className="inline-block w-2 h-2 rounded-full bg-blue-500 dark:bg-blue-400"
-                  animate={{ 
+                  animate={{
                     scale: [1, 1.5, 1],
                     opacity: [1, 0.7, 1]
                   }}
-                  transition={{ 
+                  transition={{
                     duration: 1.5,
                     repeat: Infinity,
                     ease: "easeInOut"
