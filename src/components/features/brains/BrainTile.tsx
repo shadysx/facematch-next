@@ -16,7 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { formatDisplayName } from "@/utils/formatDisplayName"
-
+import { useRouter } from "next/navigation"
 interface BrainTileProps {
   brain: Brain
   onDelete: (id: string) => void
@@ -25,6 +25,8 @@ interface BrainTileProps {
 }
 
 export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: BrainTileProps) {
+  const router = useRouter()
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -33,7 +35,11 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
       transition={{ duration: 0.3 }}
     >
       <Card className="w-full backdrop-blur-lg dark:bg-gradient-to-br dark:from-purple-900/10 dark:to-blue-900/10 
-                       border-gray-200 dark:border-purple-200/20 border rounded-xl overflow-hidden relative">
+                       border-gray-200 dark:border-purple-200/20 border rounded-xl overflow-hidden relative cursor-pointer"
+            onClick={() => {
+              router.push(`/brains/${brain.id}`)
+            }}
+          >
         {isProcessing && (
           <div className="absolute top-0 left-0 right-0 h-1 overflow-hidden bg-gray-100 dark:bg-purple-900/20">
             <motion.div
@@ -41,7 +47,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
               initial={{ x: "-100%" }}
               animate={{ x: "100%" }}
               transition={{
-                duration: 2,
+                duration: 3,
                 repeat: Infinity,
                 ease: "linear"
               }}
@@ -76,11 +82,6 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                <motion.span 
-                  className="hidden dark:inline-block w-2 h-2 rounded-full dark:bg-purple-400"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
                 {new Date(brain.createdAt).toLocaleString([], {
                   year: 'numeric',
                   month: '2-digit',
@@ -94,6 +95,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button 
+                  onClick={(e) => e.stopPropagation()}
                   variant="ghost" 
                   size="icon" 
                   className="text-gray-500 hover:text-red-600 hover:bg-red-50 
@@ -114,7 +116,10 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
-                    onClick={() => onDelete(brain.id)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(brain.id)
+                    }}
                     disabled={isLoading}
                     className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
                   >

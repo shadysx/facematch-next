@@ -6,9 +6,8 @@ import { BrainTile } from "@/components/features/brains/BrainTile"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Sparkles, Loader, Brain, Lock, ArrowRight, Star } from "lucide-react"
+import { Sparkles, Loader } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
 import GetStarted from "@/components/features/brains/GetStarted"
 
 interface IFormInputs {
@@ -17,7 +16,6 @@ interface IFormInputs {
 
 export default function BrainsPage() {
   const session = authClient.useSession()
-  const router = useRouter()
   
   const { handleSubmit, control } = useForm<IFormInputs>({
     defaultValues: {
@@ -33,6 +31,8 @@ export default function BrainsPage() {
     createBrain(data.name)
   }
 
+
+  // TODO: Use middleware to redirect to login page if user is not authenticated or protected route
   if (!session.data) {
     return <GetStarted />
   }

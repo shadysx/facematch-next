@@ -103,7 +103,7 @@ export default function Home() {
             registration required.
           </p>
           <Link href="/matches-sfw">
-            <Button size="lg" className="animate-pulse">
+            <Button size="lg">
               Start Matching
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
