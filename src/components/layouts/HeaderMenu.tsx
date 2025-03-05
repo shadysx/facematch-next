@@ -11,6 +11,17 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { Brain, Home, CreditCard, LogOut, Plus } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User, Settings } from "lucide-react";
 
 export default function HeaderMenu() {
   const session = authClient.useSession();
@@ -24,15 +35,6 @@ export default function HeaderMenu() {
         },
       },
     });
-  };
-
-  const handleCreateAPIKey = async () => {
-    const { data, error } = await authClient.apiKey.create({
-      name: "My API Key",
-      expiresIn: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    console.log(data, error);
   };
 
   return (
@@ -74,22 +76,58 @@ export default function HeaderMenu() {
 
         <div className="flex items-center gap-2">
           {session.isPending ? (
-            <div className="w-[150px] h-9 animate-pulse -muted rounded-md" />
+            <div className="w-[150px] h-9 animate-pulse bg-muted rounded-md" />
           ) : session.data ? (
-            <>
-              <Button variant="ghost" onClick={handleCreateAPIKey}>
-                <Plus className="h-4 w-4" />
-                Create API Key
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={handleSignOut}
-                className="text-sm font-medium gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </Button>
-            </>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-9 w-9 rounded-full"
+                >
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage
+                      src={session.data.user.image || ""}
+                      alt={session.data.user.name || ""}
+                    />
+                    <AvatarFallback className="bg-gradient-to-r from-purple-500/90 to-blue-500/90 text-white">
+                      {session.data.user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {session.data.user.name}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {session.data.user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => router.push("/profile")}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/settings")}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/billing")}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Billing</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <>
               <Button variant="ghost" asChild>
