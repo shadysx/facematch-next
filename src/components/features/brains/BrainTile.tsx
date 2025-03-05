@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Trash2, Cpu } from "lucide-react"
-import { motion } from "framer-motion"
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Trash2, Cpu } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,22 +14,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { formatDisplayName } from "@/utils/formatDisplayName"
-import { useRouter } from "next/navigation"
-import { useBrainStatus } from "@/hooks/queries/useBrains"
-import StatusCard from "@/components/features/brains/StatusCard"
+} from "@/components/ui/alert-dialog";
+import { formatDisplayName } from "@/utils/formatDisplayName";
+import { useRouter } from "next/navigation";
+import { useBrainStatus } from "@/hooks/queries/useBrains";
+import BrainStatusCard from "@/components/features/brains/StatusCard";
 
 interface BrainTileProps {
-  brain: Brain
-  onDelete: (id: string) => void
-  isLoading?: boolean
-  isProcessing?: boolean
+  brain: Brain;
+  onDelete: (id: string) => void;
+  isLoading?: boolean;
+  isProcessing?: boolean;
 }
 
-export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: BrainTileProps) {
-  const router = useRouter()
-  const { data: brainStatus } = useBrainStatus(brain.id)
+export function BrainTile({
+  brain,
+  onDelete,
+  isLoading,
+  isProcessing = false,
+}: BrainTileProps) {
+  const router = useRouter();
+  const { data: brainStatus } = useBrainStatus(brain.id);
 
   return (
     <motion.div
@@ -38,10 +43,11 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="w-full backdrop-blur-lg dark:bg-gradient-to-br dark:from-purple-900/10 dark:to-blue-900/10 
+      <Card
+        className="w-full backdrop-blur-lg dark:bg-gradient-to-br dark:from-purple-900/10 dark:to-blue-900/10 
                        border-gray-200 dark:border-purple-200/20 border rounded-xl overflow-hidden relative cursor-pointer"
         onClick={() => {
-          router.push(`/brains/${brain.id}`)
+          router.push(`/brains/${brain.id}`);
         }}
       >
         {isProcessing && (
@@ -53,7 +59,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
               transition={{
                 duration: 3,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "linear",
               }}
             />
             <motion.div
@@ -64,7 +70,7 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
                 duration: 1.5,
                 repeat: Infinity,
                 ease: "linear",
-                delay: 0.5
+                delay: 0.5,
               }}
             />
           </div>
@@ -86,14 +92,16 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {new Date(brain.createdAt).toLocaleString([], {
-                  year: 'numeric',
-                  month: '2-digit',
-                  day: '2-digit',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: false
-                }).replace(',', ' |')}
+                {new Date(brain.createdAt)
+                  .toLocaleString([], {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  })
+                  .replace(",", " |")}
               </motion.p>
             </div>
             <AlertDialog>
@@ -113,16 +121,16 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your brain
-                    and remove all its data from our servers.
+                    This action cannot be undone. This will permanently delete
+                    your brain and remove all its data from our servers.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={(e) => {
-                      e.stopPropagation()
-                      onDelete(brain.id)
+                      e.stopPropagation();
+                      onDelete(brain.id);
                     }}
                     disabled={isLoading}
                     className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
@@ -136,17 +144,17 @@ export function BrainTile({ brain, onDelete, isLoading, isProcessing = false }: 
         </CardContent>
         <CardFooter className="bg-gray-50/80 dark:bg-purple-900/20 border-t border-gray-200 dark:border-purple-300/10 py-3">
           <div className="flex items-center justify-between w-full">
-            <div
-              className="flex items-center gap-2"
-            >
+            <div className="flex items-center gap-2">
               <Cpu className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span className="text-gray-700 dark:text-purple-300 font-medium">Face Recognition</span>
+              <span className="text-gray-700 dark:text-purple-300 font-medium">
+                Face Recognition
+              </span>
             </div>
 
-            <StatusCard brainStatus={brainStatus} />
+            <BrainStatusCard brainStatus={brainStatus} />
           </div>
         </CardFooter>
       </Card>
     </motion.div>
-  )
+  );
 }

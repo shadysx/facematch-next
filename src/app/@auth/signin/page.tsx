@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,45 +8,54 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
-import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup"
-import { SignInForm, signInFormDefaultValues, signInValidationSchema } from "@/lib/form-validation/signInValidationSchema"
-import { authClient } from "@/lib/auth-client"
-import { useState } from "react"
-import { LoadingButton } from "@/components/common/LoadingButton"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  SignInForm,
+  signInFormDefaultValues,
+  signInValidationSchema,
+} from "@/lib/form-validation/signInValidationSchema";
+import { authClient } from "@/lib/auth-client";
+import { useState } from "react";
+import { LoadingButton } from "@/components/common/LoadingButton";
 
 export default function SignInModal() {
-  const router = useRouter()
-  const [loginError, setLoginError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setSignInError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const { control, handleSubmit, formState: { errors } } = useForm<SignInForm>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInForm>({
     defaultValues: signInFormDefaultValues,
     resolver: yupResolver(signInValidationSchema),
     mode: "onBlur",
-  })
+  });
 
-  const onSubmit: SubmitHandler<SignInForm> = async (data) => {
-    setLoginError(null)
-    try {
-      await authClient.signIn.email({
-        email: data.email!,
-        password: data.password!,
-        callbackURL: "/brains",
-      }, {
+  const onSubmit: SubmitHandler<SignInForm> = async (data, event) => {
+    event?.preventDefault();
+    setSignInError(null);
+    await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+        // callbackURL: "/brains",
+      },
+      {
         onRequest: () => setIsLoading(true),
         onError: (ctx) => {
-          setLoginError(ctx.error.message)
+          setSignInError(ctx.error.message);
         },
         onResponse: () => setIsLoading(false),
-      })
-    } catch {
-    }
-  }
+      }
+    );
+  };
 
   return (
     <div
@@ -60,12 +69,9 @@ export default function SignInModal() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
-            <CardDescription>
-              Enter your credentials to sign in
-            </CardDescription>
+            <CardDescription>Enter your credentials to sign in</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
-
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Controller
@@ -90,17 +96,14 @@ export default function SignInModal() {
                 name="password"
                 control={control}
                 render={({ field }) => (
-                  <Input
-                    {...field}
-                    id="password"
-                    type="password"
-                  />
+                  <Input {...field} id="password" type="password" />
                 )}
               />
               {errors.password && (
-                <p className="text-sm text-red-500">{errors.password.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
-
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
@@ -127,5 +130,5 @@ export default function SignInModal() {
         </form>
       </Card>
     </div>
-  )
+  );
 }
