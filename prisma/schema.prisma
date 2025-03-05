@@ -40,13 +40,14 @@ model user {
   id            String    @id @default(cuid())
   name          String
   email         String    @unique(map: "sqlite_autoindex_user_2")
-  emailVerified Int      @default(0)
+  emailVerified Int       @default(0)
   image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   account       account[]
-  session       session[]
+  apikey        apikey[]
   models        brain[]
+  session       session[]
 }
 
 model verification {
@@ -62,8 +63,34 @@ model brain {
   id        String   @id @default(cuid())
   name      String
   userId    String
-  user      user     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      user     @relation(fields: [userId], references: [id])
+
   @@unique([name, userId])
+}
+
+model apikey {
+  id                  String    @id
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  userId              String
+  refillInterval      Int?
+  refillAmount        Int?
+  lastRefillAt        DateTime?
+  enabled             Int?
+  rateLimitEnabled    Int?
+  rateLimitTimeWindow Int?
+  rateLimitMax        Int?
+  requestCount        Int?
+  remaining           Int?
+  lastRequest         DateTime?
+  expiresAt           DateTime?
+  createdAt           DateTime
+  updatedAt           DateTime
+  permissions         String?
+  metadata            String?
+  user                user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

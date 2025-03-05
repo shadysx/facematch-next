@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -10,7 +10,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { Brain, Home, CreditCard, LogOut } from "lucide-react";
+import { Brain, Home, CreditCard, LogOut, Plus } from "lucide-react";
 
 export default function HeaderMenu() {
   const session = authClient.useSession();
@@ -24,6 +24,15 @@ export default function HeaderMenu() {
         },
       },
     });
+  };
+
+  const handleCreateAPIKey = async () => {
+    const { data, error } = await authClient.apiKey.create({
+      name: "My API Key",
+      expiresIn: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    console.log(data, error);
   };
 
   return (
@@ -67,25 +76,27 @@ export default function HeaderMenu() {
           {session.isPending ? (
             <div className="w-[150px] h-9 animate-pulse -muted rounded-md" />
           ) : session.data ? (
-            <Button
-              variant="ghost"
-              onClick={handleSignOut}
-              className="text-sm font-medium gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
+            <>
+              <Button variant="ghost" onClick={handleCreateAPIKey}>
+                <Plus className="h-4 w-4" />
+                Create API Key
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleSignOut}
+                className="text-sm font-medium gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </Button>
+            </>
           ) : (
             <>
               <Button variant="ghost" asChild>
-                <Link href="/signin">
-                  Sign in
-                </Link>
+                <Link href="/signin">Sign in</Link>
               </Button>
               <Button asChild>
-                <Link href="/signup">
-                  Get Started
-                </Link>
+                <Link href="/signup">Get Started</Link>
               </Button>
             </>
           )}
