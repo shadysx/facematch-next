@@ -30,12 +30,53 @@ FaceMatch is a cutting-edge web application that combines modern frontend techno
 
 ### Backend Integration
 
-FaceMatch is powered by [facematch-ai-engine](https://github.com/shadysx/facematch-ai-engine), a custom AI engine that I built on top of:
+FaceMatch is powered by [insightface-ai-engine](https://github.com/shadysx/insightface-ai-engine), a custom AI engine that I built on top of:
 
 - [dlib](http://dlib.net/) - Advanced face recognition algorithms
 - [OpenCV](https://opencv.org/) - Computer vision and image processing
 
 <div align="center">
+
+## 📦 Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/shadysx/facematch-next.git
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env` file and set the environment variables:
+
+```bash
+cp .env.example .env
+```
+
+4. Generate DB from Prisma Schema:
+
+```bash
+npx prisma migrate deploy
+```
+
+5. Generate the Prisma client:
+
+```bash
+npx prisma generate
+```
+
+6. Start the development server:
+
+```bash
+npm run dev
+```
+
+7. Make sur you have the AI Engine running:
+   [facematch-ai-engine](https://github.com/shadysx/insightface-ai-engine)
 
 ---
 
