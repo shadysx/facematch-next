@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MatchWithImages } from "@/models/api/MatchWithImages";
 import { snakeCaseToTitleCase } from "../../../utils/snakeCaseToTitleCase";
 import { getImageSrc } from "../../../utils/getImageSrc";
-
+import Image from "next/image";
 interface MatchListProps {
   matches?: MatchWithImages[];
   isLoading: boolean;
@@ -22,10 +22,12 @@ const MatchList = (props: MatchListProps) => {
           className="flex flex-row items-center gap-4 mb-4 p-4 border rounded-lg"
         >
           <div className="relative w-[150px] h-[150px]">
-            <img
-              src={getImageSrc(match.images[0])}
+            <Image
+              src={getImageSrc(match.images?.[0] ?? "")}
               alt={match.name}
               className="w-full h-full object-cover rounded-lg"
+              width={150}
+              height={150}
             />
           </div>
           <div className="space-y-3">
@@ -40,7 +42,11 @@ const MatchList = (props: MatchListProps) => {
   );
 };
 
-const MatchCardSkeletons = ({ skeletonsNumber }) => {
+const MatchCardSkeletons = ({
+  skeletonsNumber,
+}: {
+  skeletonsNumber: number;
+}) => {
   return (
     <>
       {Array.from({ length: skeletonsNumber }).map((_, index) => (

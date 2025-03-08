@@ -1,3 +1,4 @@
+import { Brain } from "@/models/api/Brain";
 import { fetchApi } from "../client";
 import { BrainStatus } from "@/enums/BrainStatus";
 
@@ -28,9 +29,12 @@ export const brainsApi = {
     });
   },
   getBrainStatus: async (brainId: string) => {
-    const response = await fetchApi<BrainStatusResponse>(`/api/brains/${brainId}/status`, {
-      method: "GET",
-    });
+    const response = await fetchApi<BrainStatusResponse>(
+      `/api/brains/${brainId}/status`,
+      {
+        method: "GET",
+      }
+    );
     return response.status;
   },
   trainBrain: (brainId: string) => {

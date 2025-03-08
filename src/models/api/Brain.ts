@@ -1,4 +1,4 @@
-interface Brain {
+export interface Brain {
   id: string;
   name: string;
   createdAt: Date;

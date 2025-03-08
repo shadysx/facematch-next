@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReactQueryProvider } from "@/lib/react-query/provider";
 import { ThemeProvider } from "@/components/shadcn/themeProvider";
-import HeaderMenu from "@/components/layouts/HeaderMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,10 +21,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  auth
 }: Readonly<{
   children: React.ReactNode;
-  auth: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -38,13 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="container mx-auto py-4">
-            <ReactQueryProvider>
-              <HeaderMenu />
-              {auth}
-              {children}
-            </ReactQueryProvider>
-          </main>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

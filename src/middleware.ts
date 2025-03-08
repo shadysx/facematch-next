@@ -1,7 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest } from "next/server";
 // import { getSessionCookie } from "better-auth";
 
-export async function middleware(request: NextRequest) {
+// export async function middleware(request: NextRequest) {
+// TODO: Maybe ask the discord why this is not in the latest version
+//   const sessionCookie = getSessionCookie(request);
+//   if (!sessionCookie) {
+//     return NextResponse.redirect(
+//       new URL("/brains/get-started", request.nextUrl)
+//     );
+//   }
+// }
+
+export async function middleware() {
+  // TODO: Maybe ask the discord why this is not in the latest version
   //   const sessionCookie = getSessionCookie(request);
   //   if (!sessionCookie) {
   //     return NextResponse.redirect(
@@ -9,7 +20,6 @@ export async function middleware(request: NextRequest) {
   //     );
   //   }
 }
-
 // export const config = {
 //   matcher: ["/brains"],
 // };

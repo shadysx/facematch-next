@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { matchesApi } from "@/app/api/endpoints";
 
 export const matchesKeys = {

@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { snakeCaseToTitleCase } from "@/utils/snakeCaseToTitleCase";
 import { useGoogleImage } from "@/hooks/queries/useGoogleImage";
-
+import Image from "next/image";
 interface MatchResultProps {
   matchName: string;
   className?: string;
@@ -56,10 +56,12 @@ export function MatchResult({ matchName, isLoading }: MatchResultProps) {
           transition={{ delay: 0.4 }}
           className="relative"
         >
-          <img
-            src={imageUrl}
+          <Image
+            src={imageUrl ?? ""}
             alt={matchName}
             className="w-full h-64 object-cover rounded-lg"
+            width={256}
+            height={256}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-lg" />
         </motion.div>

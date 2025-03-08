@@ -10,7 +10,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
-import { Brain, Home, CreditCard, LogOut, Plus } from "lucide-react";
+import { Brain, Home, CreditCard, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
