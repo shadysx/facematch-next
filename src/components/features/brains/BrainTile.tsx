@@ -19,6 +19,7 @@ import { formatDisplayName } from "@/utils/formatDisplayName";
 import { useRouter } from "next/navigation";
 import { useBrainStatus } from "@/hooks/queries/useBrains";
 import BrainStatusCard from "@/components/features/brains/StatusCard";
+import { Brain } from "@/models/api/Brain";
 
 interface BrainTileProps {
   brain: Brain;

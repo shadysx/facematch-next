@@ -13,8 +13,6 @@ export async function withAuth(
     headers: request.headers,
   });
 
-  console.log("Session is: ", session?.user.id);
-
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -28,12 +26,6 @@ export async function withBrainAccess(
   handler: (session: Session) => Promise<NextResponse>
 ) {
   return withAuth(request, async (session) => {
-    console.log(
-      "trying to find user with id: ",
-      session.userId,
-      "and brain id: ",
-      brainId
-    );
     const userHasAccessToBrain = await prisma.brain.findUnique({
       where: {
         id: brainId,

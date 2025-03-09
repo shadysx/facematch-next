@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { snakeCaseToTitleCase } from "@/utils/snakeCaseToTitleCase";
-import { useGoogleImage } from "@/hooks/queries/useGoogleImage";
 import Image from "next/image";
 interface MatchResultProps {
   matchName: string;
@@ -11,10 +10,7 @@ interface MatchResultProps {
 }
 
 export function MatchResult({ matchName, isLoading }: MatchResultProps) {
-  const { data: imageUrl, isLoading: isImageLoading } =
-    useGoogleImage(matchName);
-
-  if (isLoading || isImageLoading) {
+  if (isLoading) {
     return <MatchResultSkeleton />;
   }
 
@@ -57,7 +53,7 @@ export function MatchResult({ matchName, isLoading }: MatchResultProps) {
           className="relative"
         >
           <Image
-            src={imageUrl ?? ""}
+            src="test"
             alt={matchName}
             className="w-full h-64 object-cover rounded-lg"
             width={256}

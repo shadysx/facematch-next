@@ -4,12 +4,11 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params;
+  const { id } = await params;
   const formData = await request.formData();
   const file = formData.get("file");
-  console.log("ID is: ", id);
 
   return withBrainAccess(request, id, async (session) => {
     try {
@@ -17,7 +16,7 @@ export async function POST(
       formDataToSend.append("file", file as Blob);
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/ai/users/${session.userId}/brains/${id}/match`,
+        `${process.env.AI_ENGINE_URL}/ai/users/${session.userId}/brains/${id}/match`,
         formDataToSend,
         {
           headers: {

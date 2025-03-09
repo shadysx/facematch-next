@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
         },
       });
       if (existingBrain) {
-        console.log("A brain with this name already exists");
         return NextResponse.json(
           { error: "A brain with this name already exists" },
           { status: 400 }
@@ -60,7 +59,7 @@ export async function POST(req: NextRequest) {
 
         try {
           await axios.post(
-            `http://127.0.0.1:8000/ai/brains?user_id=${session.userId}&brain_id=${brain.id}`,
+            `${process.env.AI_ENGINE_URL}/ai/brains?user_id=${session.userId}&brain_id=${brain.id}`,
             null,
             {
               headers: {

@@ -7,6 +7,7 @@ import Link from "next/link";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useBrainStatus } from "@/hooks/queries/useBrains";
+import { Brain } from "@/models/api/Brain";
 
 interface BrainDetailHeaderProps {
   brain: Brain;

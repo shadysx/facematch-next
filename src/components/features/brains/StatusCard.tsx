@@ -13,7 +13,6 @@ const BrainStatusCard = (props: StatusCardProps) => {
   const isReady = brainStatus === BrainStatus.READY;
   const isTraining = brainStatus === BrainStatus.TRAINING;
   const isNotFound = brainStatus === undefined;
-  console.log(brainStatus);
 
   return (
     <Card
