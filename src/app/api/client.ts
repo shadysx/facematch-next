@@ -3,7 +3,7 @@ import axios from "axios";
 export async function fetchApi<T>(
   url: string,
   options?: {
-    method?: "GET" | "POST" | "DELETE";
+    method?: "GET" | "POST" | "PATCH" | "DELETE";
     body?: FormData | Record<string, string>;
     headers?: Record<string, string>;
   }
@@ -27,13 +27,23 @@ export async function fetchApi<T>(
       const headers = isFormData
         ? { ...options?.headers }
         : {
-          "Content-Type": "application/json",
-          ...options?.headers,
-        };
+            "Content-Type": "application/json",
+            ...options?.headers,
+          };
 
       const response = await axios.post(url, options?.body, {
         headers,
         ...options,
+      });
+      return response.data;
+    }
+
+    if (method === "PATCH") {
+      const response = await axios.patch(url, options?.body, {
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+        },
       });
       return response.data;
     }
@@ -52,9 +62,7 @@ export async function fetchApi<T>(
     throw new Error(`Unsupported method: ${method}`);
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(
-        `${error.response?.data.error || "Unknown error"}`
-      );
+      throw new Error(`${error.response?.data.error || "Unknown error"}`);
     }
     throw error;
   }

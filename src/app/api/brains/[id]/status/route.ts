@@ -15,8 +15,7 @@ export async function GET(
       );
 
       return NextResponse.json(response.data);
-    } catch (error) {
-      console.error("Error checking brain status:", error);
+    } catch {
       return NextResponse.json(
         { error: "Failed to check brain status" },
         { status: 500 }

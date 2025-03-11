@@ -26,8 +26,7 @@ export async function POST(
       );
 
       return NextResponse.json(response.data);
-    } catch (error) {
-      console.error("Error matching face:", error);
+    } catch {
       return NextResponse.json(
         { error: "Failed to match face" },
         { status: 500 }

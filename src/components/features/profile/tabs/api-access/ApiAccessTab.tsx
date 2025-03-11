@@ -1,82 +1,62 @@
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 
 import { Card } from "@/components/ui/card";
 import { ApiAccessHeaderCard } from "./ApiAccessHeaderCard";
-import { ApiKeyList } from "./ApiKeysList";
 import { ApiAccessExemple } from "./ApiAccessExemple";
+import {
+  useCreateKey,
+  useGetKeys,
+  useRefreshKey,
+} from "@/hooks/queries/useKeys";
 import { useState } from "react";
-import { useEffect } from "react";
-import { authClient } from "@/lib/auth-client";
+import { ApiKey } from "@/models/better-auth/ApiKey";
+import { ApiKeyLine } from "./ApiKeysLine";
 
 export const ApiAccessTab = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [apiKeys, setApiKeys] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // TODO: Create hook
-  useEffect(() => {
-    const fetchApiKeys = async () => {
-      const { data: apiKeys, error } = await authClient.apiKey.list();
-      if (error) {
-        console.error(error);
-        return;
-      }
-      setApiKeys(apiKeys || []);
-    };
-    fetchApiKeys();
-  }, []);
-
-  // TODO: Add toast notification + use the utils => createApiKey()
+  const [newApiKey, setNewApiKey] = useState<ApiKey>();
+  const { data: apiKeys, isLoading } = useGetKeys();
+  const { mutateAsync: createKey } = useCreateKey();
+  const { mutateAsync: refreshKey } = useRefreshKey();
+  // TODO: Add toast notification
   const handleCreateApiKey = async () => {
-    setIsLoading(true);
-    try {
-      const { data: newKey, error } = await authClient.apiKey.create({
-        name: `API Key ${apiKeys?.length ?? 0 + 1}`,
-      });
-
-      if (error) throw error;
-
-      setApiKeys([...apiKeys, newKey]);
-    } catch (error) {
-      console.error("Failed to create API key:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    const newApiKey = await createKey();
+    console.log(newApiKey);
+    setNewApiKey(newApiKey);
   };
 
   // TODO: Add toast notification && fix the delete
-  const handleDeleteKey = async (keyId: string) => {
-    try {
-      const { error } = await authClient.apiKey.delete({
-        keyId: keyId,
-      });
-      if (error) throw error;
+  // const handleDeleteKey = async (keyId: string) => {
+  //   try {
+  //     const { error } = await authClient.apiKey.delete({
+  //       keyId: keyId,
+  //     });
+  //     if (error) throw error;
+  //   } catch {
+  //     // TODO: Add toast notification
+  //   }
+  // };
 
-      setApiKeys(apiKeys.filter((key) => key.id !== keyId));
-    } catch (error) {
-      console.error("Failed to delete API key:", error);
-    }
+  const handleRefreshKey = async (keyId: string) => {
+    const newApiKey = await refreshKey(keyId);
+    console.log("refresh", newApiKey);
+    setNewApiKey(newApiKey);
   };
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>API Keys</CardTitle>
-        <CardDescription>
-          Manage your API keys for accessing the Brain API
-        </CardDescription>
-      </CardHeader>
       <CardContent className="space-y-6">
         <ApiAccessHeaderCard
+          shouldShowCreateButton={apiKeys?.length === 0}
           handleCreateApiKey={handleCreateApiKey}
           isLoading={isLoading}
         />
-        <ApiKeyList apiKeys={apiKeys} handleDeleteKey={handleDeleteKey} />
+        {(newApiKey || apiKeys?.[0]) && (
+          <ApiKeyLine
+            apiKey={newApiKey || apiKeys![0]}
+            handleRefreshKey={handleRefreshKey}
+          />
+        )}
         <ApiAccessExemple />
       </CardContent>
     </Card>
